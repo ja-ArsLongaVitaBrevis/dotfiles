@@ -1,3 +1,5 @@
+DIR_PATH="${BASH_SOURCE//\/.bash_profile}"
+
 # Reset="\x1b[0m"
 # Bright="\x1b[1m"
 # Dim="\x1b[2m"
@@ -58,7 +60,7 @@ updateNodeVersion
 ## Enable git tab completion
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
-source ~/.git-prompt.sh
+source "${DIR_PATH}/.git-prompt.sh"
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWSTASHSTATE=1
 export GIT_PS1_SHOWUNTRACKEDFILES=1
