@@ -1,4 +1,6 @@
 DIR_PATH="${BASH_SOURCE//\/.bash_profile}"
+PARENT_DIR=${DIR_PATH%/*}
+USER=$(id -F)
 
 # Reset="\x1b[0m"
 # Bright="\x1b[1m"
@@ -33,10 +35,14 @@ reset="\[\033[0m\]"
 red="\[\e[1;31m\]"
 yellow="\[\e[93m\]"
 
+# REMOVE `ZSH` WARNING IN CATALINA
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
 
 # NVM
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  #This loads nvm bash_completion
 
 alias get_npm_global_pkgs='npm list -g --depth 0'
 alias source_bash_profile='source ~/.bash_profile'
@@ -45,12 +51,14 @@ alias track_cpu_ussage="while true; do ps -A -o %cpu | awk '{s+=$1} END {print s
 alias get_process_in_running_in_port="lsof -i tcp:"
 
 # IF .nvmrc EXIST SET `NODE` VERSION FOR CURRENT TERMINAL SESSION
-function updateNodeVersion() { 
+function updateNodeVersion() {
     if [ -f ./.nvmrc ]
     then
         echo ''
         echo '.nvmrc FOUND - SETTING UP PORPER NODE VERSION'
         nvm install
+    else
+        echo "NODE VERSION: $(node -v)"
     fi
 }
 updateNodeVersion
@@ -59,6 +67,7 @@ updateNodeVersion
 # GIT
 ## Enable git tab completion
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+[[ -f "${DIR_PATH}/.git-completion.bash" ]] && . ${DIR_PATH}/.git-completion.bash
 
 source "${DIR_PATH}/.git-prompt.sh"
 export GIT_PS1_SHOWDIRTYSTATE=1
@@ -68,7 +77,7 @@ export GIT_PS1_SHOWUPSTREAM='verbose' # auto | verbose
 export GIT_PS1_SHOWCOLORHINTS=1
 export GIT_PS1_STATESEPARATOR=' '
 export GIT_PS1_DESCRIBE_STYLE='descriptive'
-alias git_look_up="git log -p -S "
+alias git_look_up="git log -p -S " # example: git log -p -S <string to look up>
 ## Graphs
 alias lg=lg1
 alias lg1="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'"
@@ -77,8 +86,8 @@ alias lg3="git log --graph --abbrev-commit --decorate --format=format:'%C(bold b
 
 
 # SDKMAN
-export SDKMAN_DIR="/Users/Jean-Ariza/.sdkman"
-[[ -s "/Users/Jean-Ariza/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/Jean-Ariza/.sdkman/bin/sdkman-init.sh"
+export SDKMAN_DIR="/Users/${USER}/.sdkman"
+[[ -s "/Users/${USER}/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/${USER}/.sdkman/bin/sdkman-init.sh"
 
 
 # JAVA
@@ -102,11 +111,11 @@ alias docker_stop_all_containers="docker stop \$(docker ps -aq)"
 ## source aws_complete
 ### Path to `/usr/local/bin/aws_completer` have to be added to $PATH > Added directly to `/etc/paths`
 # complete -C '/usr/local/bin/aws_completer' aws
-complete -C $(which aws_completer) aws
+# complete -C $(which aws_completer) aws
 ## aws helpers
-source ~/Sites/dx-tools/aws-tools/deployment-permissions.sh
+# source $PARENT_DIR/dx-tools/deployment-permissions.sh
 
-awsSetDefaults # function defined in ~/Sites/dx-tools/deployment-permissions/helpers.sh
+# awsSetDefaults # function defined in ../dx-tools/deployment-permissions.sh
 
 # PROMPT
 # '\u' adds the name of the current user to the prompt
@@ -119,7 +128,7 @@ test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shel
 # CUSTOM COMMANDS
 alias ls='ls -GFh'
 
-function cd() { 
+function cd() {
     builtin cd "$@"
     updateNodeVersion
 }
@@ -132,7 +141,7 @@ function start_server() {
 function killPort() {
     if [ -z "$1" ]
     then
-        echo "[ ERROR ] Please pass a port, run: 'killPort <port>'" 
+        echo "[ ERROR ] Please pass a port, run: 'killPort <port>'"
     else
         echo "**** KILLING FOLLOWING PROCCESS ****"
         lsof -i tcp:$1
@@ -143,8 +152,18 @@ function killPort() {
 function listProcessOnPort() {
     if [ -z "$1" ]
     then
-        echo "[ ERROR ] Please pass a port, run: 'listProcessOnPort <port>'" 
+        echo "[ ERROR ] Please pass a port, run: 'listProcessOnPort <port>'"
     else
         lsof -i tcp:$1
     fi
+}
+
+function moveToTrash () {
+    if [ -z "$1" ]
+    then
+        echo "[ ERROR ] Please pass a dir or file path."
+    else
+        mv "${1}" "~/.Trash/${1}"
+    fi
+
 }
