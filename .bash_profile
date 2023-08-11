@@ -56,7 +56,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 ## Deep Shell Integration: https://github.com/nvm-sh/nvm#automatically-call-nvm-use
-source "${DIR_PATH}/.nvm_shell_integration"
+source "${DIR_PATH}/.nvm_shell_integration.sh"
 
 
 # GIT
