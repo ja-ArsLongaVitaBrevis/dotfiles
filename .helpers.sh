@@ -1,7 +1,9 @@
 # ALIAS
 alias get_os_cores='sysctl hw.physicalcpu hw.logicalcpu'
-alias track_cpu_ussage="while true; do ps -A -o %cpu | awk '{s+=$1} END {print s "%"}' >> cpu.txt; sleep 10; done" # logs CPU ussage to 'cpu.txt'
 alias get_process_running_in_port="lsof -i tcp:"
+alias track_cpu_ussage="while true; do ps -A -o %cpu | awk '{s+=$1} END {print s "%"}' >> cpu.txt; sleep 10; done" # logs CPU ussage to 'cpu.txt'
+alias cpu_track_ussage=track_cpu_ussage
+
 ## Print my public IP
 alias get_myip='curl ipinfo.io/ip'
 

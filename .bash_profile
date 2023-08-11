@@ -27,7 +27,8 @@ source "${DIR_PATH}/.helpers.sh"
 
 # NPM
 # source "${DIR_PATH}/.npm_completion"
-alias npm_get_global_pkgs='npm list -g --depth 0'
+alias get_npm_global_pkgs='npm list -g --depth 0'
+alias npm_get_global_pkgs=get_npm_global_pkgs
 
 
 # Reset="\x1b[0m"
