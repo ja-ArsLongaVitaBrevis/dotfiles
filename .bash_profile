@@ -35,75 +35,28 @@ reset="\[\033[0m\]"
 red="\[\e[1;31m\]"
 yellow="\[\e[93m\]"
 
+
 # REMOVE `ZSH` WARNING IN CATALINA
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
 
-alias get_npm_global_pkgs='npm list -g --depth 0'
+alias npm_get_global_pkgs='npm list -g --depth 0'
 alias source_bash_profile='source ~/.bash_profile'
 alias get_os_cores='sysctl hw.physicalcpu hw.logicalcpu'
 alias track_cpu_ussage="while true; do ps -A -o %cpu | awk '{s+=$1} END {print s "%"}' >> cpu.txt; sleep 10; done" # logs CPU ussage to 'cpu.txt'
-alias get_process_in_running_in_port="lsof -i tcp:"
+alias get_process_running_in_port="lsof -i tcp:"
 
-# NVM
-## Persisting custom colors
-export NVM_COLORS='cmgRY'
-## Load `nvm`
+
+# NPM
+# source "${DIR_PATH}/.npm_completion"
+
+# NVM - NODE
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-## Deeper Shell Integration
-cdnvm() {
-    command cd "$@";
-    nvm_path=$(nvm_find_up .nvmrc | tr -d '\n')
 
-    # If there are no .nvmrc file, use the default nvm version
-    if [[ ! $nvm_path = *[^[:space:]]* ]]; then
-
-        declare default_version;
-        default_version=$(nvm version default);
-
-        # If there is no default version, set it to `node`
-        # This will use the latest version on your machine
-        if [[ $default_version == "N/A" ]]; then
-            nvm alias default node;
-            default_version=$(nvm version default);
-        fi
-
-        # If the current version is not the default version, set it to use the default version
-        if [[ $(nvm current) != "$default_version" ]]; then
-            nvm use default;
-            
-        fi
-
-    elif [[ -s $nvm_path/.nvmrc && -r $nvm_path/.nvmrc ]]; then
-        declare nvm_version
-        nvm_version=$(<"$nvm_path"/.nvmrc)
-
-        declare locally_resolved_nvm_version
-        # `nvm ls` will check all locally-available versions
-        # If there are multiple matching versions, take the latest one
-        # Remove the `->` and `*` characters and spaces
-        # `locally_resolved_nvm_version` will be `N/A` if no local versions are found
-        locally_resolved_nvm_version=$(nvm ls --no-colors "$nvm_version" | tail -1 | tr -d '\->*' | tr -d '[:space:]')
-
-        # If it is not already installed, install it
-        # `nvm install` will implicitly use the newly-installed version
-        if [[ "$locally_resolved_nvm_version" == "N/A" ]]; then
-            nvm install "$nvm_version";
-        elif [[ $(nvm current) != "$locally_resolved_nvm_version" ]]; then
-            nvm use "$nvm_version";
-            
-        fi
-    fi
-    
-}
-alias cd='cdnvm'
-cd "$PWD"
-
-echo 'NODE VERSION'
-node -v
-
+## Deep Shell Integration: https://github.com/nvm-sh/nvm#automatically-call-nvm-use
+source "${DIR_PATH}/.nvm_shell_integration"
 
 
 # GIT
@@ -120,6 +73,10 @@ export GIT_PS1_SHOWCOLORHINTS=1
 export GIT_PS1_STATESEPARATOR=' '
 export GIT_PS1_DESCRIBE_STYLE='descriptive'
 alias git_look_up="git log -p -S " # example: git log -p -S <string to look up>
+function git_checkout_to_tag () {
+    git checkout $(git rev-list -n 1 ${1})
+}
+
 ## Graphs
 alias lg=lg1
 alias lg1="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(auto)%s%C(reset) %C(blue)- %an%C(reset)%C(auto)%d%C(reset)'"
@@ -127,9 +84,34 @@ alias lg2="git log --graph --abbrev-commit --decorate --format=format:'%C(bold b
 alias lg3="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(auto)%s%C(reset)%n''          %C(blue)- %an <%ae> %C(reset) %C(blue)(committer: %cn <%ce>)%C(reset)'"
 
 
-# SDKMAN
-export SDKMAN_DIR="/Users/${USER}/.sdkman"
-[[ -s "/Users/${USER}/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/${USER}/.sdkman/bin/sdkman-init.sh"
+# # SDKMAN
+# export SDKMAN_DIR="/Users/${USER}/.sdkman"
+# [[ -s "/Users/${USER}/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/${USER}/.sdkman/bin/sdkman-init.sh"
+
+
+# # MAC PORTS
+# # Your previous /Users/jean.ariza/.bash_profile file was backed up as /Users/jean.ariza/.bash_profile.macports-saved_2021-12-13_at_14:09:12
+# ##
+# # MacPorts Installer addition on 2021-12-13_at_14:09:12: adding an appropriate PATH variable for use with MacPorts.
+# export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+
+
+# HOMEBREW - BREW
+eval "$(/opt/homebrew/bin/brew shellenv)"
+## COMPLETION SCRIPT
+if type brew &>/dev/null
+then
+  HOMEBREW_PREFIX="$(brew --prefix)"
+  if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]
+  then
+    source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+  else
+    for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*
+    do
+      [[ -r "${COMPLETION}" ]] && source "${COMPLETION}"
+    done
+  fi
+fi
 
 
 # # JAVA
@@ -145,11 +127,13 @@ alias drun='docker run -it --rm --network=host -v $(pwd):/opt/work --workdir=/op
 alias drun-cloud-infrastructure-build="drun fluidic.azurecr.io/ci-cloud-rust:1.53.0-slim-buster just cloud-infrastructure-build" # debian.buster === stable  . debian.bulleye === testing
 alias drun-data-analytics-build="drun fluidic.azurecr.io/ci-cloud-rust:1.53.0-slim-buster just data-analytics-build" # debian.buster === stable  . debian.bulleye === testing
 
+
 # MYSQL
 # MySQL Client
 # alias mysql='/Applications/MySQLWorkbench.app/Contents/MacOS/mysql'
 # MySQL Dump
 # ln -s /Applications/MySQLWorkbench.app/Contents/MacOS/mysqldump /usr/local/bin/mysqldump
+
 
 # AWS
 ## source aws_complete
@@ -161,6 +145,7 @@ alias drun-data-analytics-build="drun fluidic.azurecr.io/ci-cloud-rust:1.53.0-sl
 
 # awsSetDefaults # function defined in ../dx-tools/deployment-permissions.sh
 
+
 # PROMPT
 # '\u' adds the name of the current user to the prompt
 # '\$(__git_ps1)' adds git-related stuff
@@ -168,13 +153,10 @@ alias drun-data-analytics-build="drun fluidic.azurecr.io/ci-cloud-rust:1.53.0-sl
 export PS1="\n$red\$(/bin/date)$blue jobs:\j \n$purple\u $light_green\w $blue\$(__git_ps1 \" (%s)\") \n$red[\!] $green$ $reset"
 
 
-# ITERM
-test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
-
-
 # CUSTOM COMMANDS
 ## Print my public IP
 alias myip='curl ipinfo.io/ip'
+
 
 ## HISTORY
 HISTTIMEFORMAT="%F %T: "
@@ -189,14 +171,17 @@ function ls() {
 # alias lsa="ls -al"
 alias lsa="exa -al"
 
-## cd
-export CDPATH=:~:~/Repos:~/Code:~/Sites
 
 
-# CUSTOM FUNCTIONS
-function start_server() {
+## CUSTOM FUNCTIONS
+function start_server_python2() {
     PORT=$1
     python -m SimpleHTTPServer ${PORT-8000}
+}
+
+function start_server_python3() {
+    PORT=$1
+    python3 -m http.server ${PORT-8000}
 }
 
 function killPort() {
@@ -237,3 +222,12 @@ function replaceTextInFiles() {
         LC_ALL=C find . -type f -name '*.json' -exec sed -i '' s/F1W-058/F1W-001/ {} +
     fi
 }
+
+
+# SMART SPACE
+alias ssl_local_proxy="nvm use 16.17.0 && local-ssl-proxy -s 29000 -t 3000 -c /Users/jean.ariza/Code/localssl/wildcard.platform.localhost.crt -k /Users/jean.ariza/Code/localssl/wildcard.platform.localhost.key"
+alias ssl_local_proxy_3001="nvm use 16.17.0 && local-ssl-proxy -s 29000 -t 3001 -c /Users/jean.ariza/Code/localssl/wildcard.platform.localhost.crt -k /Users/jean.ariza/Code/localssl/wildcard.platform.localhost.key"
+# alias ss_local_proxy="local-ssl-proxy -s 29000 -t 3000 -c /mnt/c/JeanTemp/SSL_PROXY/wildcard.platform.localhost.crt -k /mnt/c/JeanTemp/SSL_PROXY/wildcard.platform.localhost.key"
+
+# MAc OS - M1 chip
+alias rosetta2="arch -x86_64 bash --login"
