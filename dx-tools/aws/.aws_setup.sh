@@ -9,7 +9,8 @@ function aws_setup {
   export AWS_CLI_AUTO_PROMPT=on
 
   source "${DIR_PATH}/.aws-helpers.sh"
-  awsSetDefaults # function defined in ./.aws-helpers.sh
+  
+  # awsSetDefaults # function defined in ./.aws-helpers.sh
 
   ## source aws_complete (❗️ Only needed with AWS-CLI v.1)
   ### Path to `/usr/local/bin/aws_completer` have to be added to $PATH > Added directly to `/etc/paths`
