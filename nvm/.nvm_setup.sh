@@ -1,7 +1,6 @@
 function nvm_setup {
   # $BASH_SOURCE is a reference to the absolut_path of this file
   local DIR_PATH=$(dirname "$BASH_SOURCE")
-  echo $DIR_PATH
 
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

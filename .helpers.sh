@@ -18,15 +18,6 @@ function ls() {
 # alias lsa="ls -al"
 alias lsa="exa -al"
 
-function start_server_python2() {
-    PORT=$1
-    python -m SimpleHTTPServer ${PORT-8000}
-}
-
-function start_server_python3() {
-    PORT=$1
-    python3 -m http.server ${PORT-8000}
-}
 
 function killPort() {
     if [ -z "$1" ]
