@@ -155,6 +155,19 @@ class SmartSyncHandler(FileSystemEventHandler):
         Args:
             src_path (str): Path of the file in the source directory
         """
+        # Check if source file exists before proceeding
+        if not os.path.exists(src_path):
+            rel_path = (
+                os.path.relpath(src_path, self.source_dir)
+                if os.path.commonpath([self.source_dir]) in src_path
+                else src_path
+            )
+            logger.warning(
+                f"Source file {rel_path} not found in {self.source_dir}. "
+                f"It might have been deleted before sync on modification."
+            )
+            return
+
         # Skip if path is a directory or should be ignored
         if os.path.isdir(src_path) or self.should_ignore(src_path):
             return
@@ -177,14 +190,36 @@ class SmartSyncHandler(FileSystemEventHandler):
                 return
 
         # If both files exist, compare modification times
-        src_mtime = os.path.getmtime(src_path)
-        dest_mtime = os.path.getmtime(dest_path)
+        try:
+            src_mtime = os.path.getmtime(src_path)
+        except FileNotFoundError:
+            logger.warning(f"Source file {rel_path} disappeared during sync operation")
+            return
+
+        try:
+            dest_mtime = os.path.getmtime(dest_path)
+        except FileNotFoundError:
+            # If destination file disappeared, treat it as if it doesn't exist
+            logger.warning(
+                f"Destination file {rel_path} disappeared during sync operation"
+            )
+            try:
+                shutil.copy2(src_path, dest_path)
+                logger.info(f"Re-created: {rel_path} in {self.target_dir}")
+            except Exception as e:
+                logger.error(f"Error re-creating {dest_path}: {e}")
+            return
 
         # Copy the newer file to replace the older one
         if src_mtime > dest_mtime:
             try:
                 shutil.copy2(src_path, dest_path)
                 logger.info(f"Updated: {rel_path} in {self.target_dir} (newer version)")
+                return
+            except FileNotFoundError:
+                logger.warning(
+                    f"File disappeared during copy operation: {src_path} or {dest_path}"
+                )
                 return
             except Exception as e:
                 logger.error(f"Error updating {dest_path}: {e}")
@@ -195,6 +230,11 @@ class SmartSyncHandler(FileSystemEventHandler):
                 shutil.copy2(dest_path, src_path)
                 logger.info(
                     f"Updated: {rel_path} in {self.source_dir} (target was newer)"
+                )
+                return
+            except FileNotFoundError:
+                logger.warning(
+                    f"File disappeared during copy operation: {src_path} or {dest_path}"
                 )
                 return
             except Exception as e:
