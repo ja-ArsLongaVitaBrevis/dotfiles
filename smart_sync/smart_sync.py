@@ -33,6 +33,16 @@ recent_events = {}
 # Time window to consider events as duplicates (in seconds)
 EVENT_WINDOW = 2
 
+# Default patterns to ignore during synchronization
+DEFAULT_IGNORE_PATTERNS = [
+    ".DS_Store",  # macOS specific files
+    "Thumbs.db",  # Windows thumbnail cache
+    # ".git",  # Git version control directory
+    # ".svn",  # Subversion version control directory
+    "__pycache__",  # Python bytecode cache directory
+    "*.pyc",  # Python compiled files
+]
+
 
 class SmartSyncHandler(FileSystemEventHandler):
     """
@@ -51,7 +61,14 @@ class SmartSyncHandler(FileSystemEventHandler):
         """
         self.source_dir = os.path.abspath(source_dir)
         self.target_dir = os.path.abspath(target_dir)
-        self.ignore_patterns = ignore_patterns or []
+        # Start with a copy of the default patterns
+        final_ignore_patterns = DEFAULT_IGNORE_PATTERNS[:]
+        if ignore_patterns:
+            # Add user-provided patterns, ensuring no duplicates if they overlap with defaults
+            for pattern in ignore_patterns:
+                if pattern not in final_ignore_patterns:
+                    final_ignore_patterns.append(pattern)
+        self.ignore_patterns = final_ignore_patterns
         logger.info(f"Monitoring {self.source_dir} for changes")
         logger.info(f"Syncing with {self.target_dir}")
         if self.ignore_patterns:
@@ -406,3 +423,6 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
+
+# HEY THERE
+# AHOY
