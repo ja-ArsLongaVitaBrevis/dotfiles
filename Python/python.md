@@ -29,7 +29,7 @@ INSTALLING DEPENDENCIES
 
 ```sh
 python3 -m pip install -r /path/to/new/virtual/environment
-
+```
 
 # VERSION MANAGERS
 
@@ -42,4 +42,7 @@ FUNCTIONS
 - guard clause : https://elixirschool.com/en/lessons/basics/functions#guards-6
 
 PATTERN MATCHING
+
+```
+
 ```
