@@ -5,27 +5,30 @@
 - https://docs.python.org/3/library/venv.html
 - https://packaging.python.org/en/latest/tutorials/installing-packages/
 
-## CREATING VIRTUAL ENV:
+## INSTALLING DEPS IN .VENV & CREATING VIRTUAL ENV:
 
-CREATING
+Follow steps in order:
 
-```sh
-python3 -m venv /path/to/new/virtual/environment
-```
-
-ACTIVATION
+1. CREATING
 
 ```sh
-source <venv>/bin/activate
+python3 -m venv /path/to/new/virtual/environment/.venv
+#  notice that `.venv` is a directory, and the name can be different (name is given by you)
 ```
 
-DEACTIVATION
+2. ACTIVATION
+
+```sh
+source .venv/bin/activate
+```
+
+3. DEACTIVATION
 
 ```sh
 deactivate
 ```
 
-INSTALLING DEPENDENCIES
+4. INSTALLING DEPENDENCIES
 
 ```sh
 python3 -m pip install -r /path/to/new/virtual/environment
