@@ -9,29 +9,29 @@
 
 Follow steps in order:
 
-1. CREATING
+1. CREATING .VENV
 
 ```sh
 python3 -m venv /path/to/new/virtual/environment/.venv
+python3 -m venv ./.venv
 #  notice that `.venv` is a directory, and the name can be different (name is given by you)
 ```
 
-2. ACTIVATION
+2. ACTIVATION / DEACTIVATION
 
 ```sh
 source .venv/bin/activate
 ```
 
-3. DEACTIVATION
-
 ```sh
 deactivate
 ```
 
-4. INSTALLING DEPENDENCIES
+3. INSTALLING DEPENDENCIES
 
 ```sh
-python3 -m pip install -r /path/to/new/virtual/environment
+python3 -m pip install -r /path/to/requirements.txt
+python3 -m pip install -r ./requirements.txt
 ```
 
 # VERSION MANAGERS
