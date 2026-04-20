@@ -10,13 +10,8 @@ alias get_myip='curl ipinfo.io/ip'
 # CUSTOM FUNCTIONS
 
 ## ls
-function ls() {
-    # builtin ls "$@"
-    exa "$@"
-}
-# alias ls='ls -GFh'
-# alias lsa="ls -al"
-alias lsa="exa -al"
+alias ls='ls -GFh'
+alias lsa="ls -al"
 
 
 function killPort() {
