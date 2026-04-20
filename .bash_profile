@@ -17,7 +17,7 @@ source "${DIR_PATH}/.brew.sh"
 source "${DIR_PATH}/dx-tools/aws/.aws_setup.sh"
 
 # GCLOUD : Google Cloud SDK
-source "${DIR_PATH}/.gcloud.sh"
+source "${DIR_PATH}/GoogleCloud/.gcloud.sh"
 
 
 # NVM - NODE
@@ -38,10 +38,15 @@ source "${DIR_PATH}/Rust/.rust.sh"
 # PYTHON
 source "${DIR_PATH}/Python/.python.sh"
 
+# AI TOOLS
+## Claude Bedrock
+source "${DIR_PATH}/AiTools/.ClaudeBedrock.sh"
+
 # NPM
 # source "${DIR_PATH}/.npm_completion"
 alias get_npm_global_pkgs='npm list -g --depth 0'
 alias npm_get_global_pkgs=get_npm_global_pkgs
+
 
 
 # Reset="\x1b[0m"

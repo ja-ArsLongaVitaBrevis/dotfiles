@@ -16,3 +16,5 @@
 ## Optional
 
 - Install JAVA
+
+Focus on something that bothers you or that you are passionate about changing. Think about issues you see personally, with friends and family, or in the world at large.

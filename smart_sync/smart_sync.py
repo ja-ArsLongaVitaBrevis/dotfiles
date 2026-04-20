@@ -41,6 +41,8 @@ DEFAULT_IGNORE_PATTERNS = [
     # ".svn",  # Subversion version control directory
     "__pycache__",  # Python bytecode cache directory
     "*.pyc",  # Python compiled files
+    "node_modules",
+    ".git",
 ]
 
 
