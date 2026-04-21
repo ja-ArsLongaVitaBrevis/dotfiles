@@ -1,4 +1,4 @@
-# jesuarva-dotfiles
+# dotfiles
 
 A modular Bash environment for macOS, engineered for fast interactive shell
 startup. The previous iteration took **~1 second** to open every new terminal
