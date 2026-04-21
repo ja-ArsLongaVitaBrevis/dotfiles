@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 # Core shell setup — always cheap. No subprocess calls here.
 
-# Silence macOS "default shell is now zsh" warning.
+# Silence macOS's "default shell is now zsh" warning.
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # History.

@@ -6,7 +6,7 @@
 #
 #     source ~/CodeBis/jesuarva-dotfiles/nvm/auto-switch.sh
 #
-# Or enable always by uncommenting the line in lib/40-lazy.sh.
+# Or enable always by uncommenting the line in nvm/lazy.sh.
 
 _nvmrc_auto_switch() {
   # This runs inside a cd wrapper, so nvm is already loaded (the wrapper
@@ -43,5 +43,9 @@ cdnvm() {
   _nvmrc_auto_switch
 }
 alias cd='cdnvm'
-# Trigger once for the current directory.
-cdnvm "$PWD"
+
+# NOTE: deliberately NOT bootstrapping with `cdnvm "$PWD"` here. Doing so
+# forces nvm to load at shell startup (~400 ms) — defeating the lazy loader.
+# If you open a terminal inside a project with a .nvmrc, the version switch
+# happens on your first `cd` (even `cd .`). If you want startup-time
+# switching regardless of cost, add `cdnvm "$PWD"` to ~/.bash_profile.local.

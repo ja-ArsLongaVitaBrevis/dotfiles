@@ -1,11 +1,10 @@
 # shellcheck shell=bash
-# Lazy loaders for expensive tools. The real tool is only loaded on first use,
-# so shell startup stays fast.
-
-# --- NVM lazy-load ------------------------------------------------------------
-# The real nvm.sh is ~4700 lines; sourcing it at startup costs 500ms–2s.
+# NVM lazy-load — sourced from .bash_profile.
+#
+# Why: the real nvm.sh is ~4,700 lines; sourcing it at startup costs 500 ms–2 s.
 # Instead, define stubs for `nvm`, `node`, `npm`, `npx`. First call unsets the
 # stubs, sources the real nvm.sh, and re-invokes the command.
+
 export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
 if [[ -s "$NVM_DIR/nvm.sh" ]]; then
@@ -20,9 +19,8 @@ if [[ -s "$NVM_DIR/nvm.sh" ]]; then
   npm()  { _load_nvm; npm  "$@"; }
   npx()  { _load_nvm; npx  "$@"; }
 
-  # Make the default node available on PATH without loading nvm. This points
-  # $PATH at nvm's alias target for `default` so scripts that call `node`
-  # without a shell function (e.g. from editors) still work.
+  # Expose the default Node on PATH without loading nvm. Scripts and editors
+  # that call `node` outside a shell function (no function context) still work.
   if [[ -s "$NVM_DIR/alias/default" ]]; then
     _nvm_default_version="$(< "$NVM_DIR/alias/default")"
     if [[ -d "$NVM_DIR/versions/node/v$_nvm_default_version/bin" ]]; then
@@ -34,7 +32,8 @@ if [[ -s "$NVM_DIR/nvm.sh" ]]; then
   fi
 fi
 
-# Opt-in .nvmrc auto-switch: replaces the old global `cd` override.
-# To enable per-session: `source $DOTFILES_DIR/tools/nvm-auto-switch.sh`
-# To enable always: uncomment the next line.
-# [[ -r "$DOTFILES_DIR/tools/nvm-auto-switch.sh" ]] && source "$DOTFILES_DIR/tools/nvm-auto-switch.sh"
+# .nvmrc auto-switch on `cd`. Replaces the old global `cd` override.
+# - To enable per-session only: comment the line below and instead run
+#     source "$DOTFILES_DIR/nvm/auto-switch.sh"
+# - To disable entirely: comment the line below.
+[[ -r "$DOTFILES_DIR/nvm/auto-switch.sh" ]] && source "$DOTFILES_DIR/nvm/auto-switch.sh"
