@@ -9,8 +9,8 @@ losing any functionality.
 
 ## Results
 
-Measured on Apple Silicon (M-series) with Homebrew Bash 5, 20 samples of
-`bash -lic exit`:
+Measured on Apple Silicon (M-series) with macOS system bash (3.2.57), 20
+samples of `bash -lic exit`:
 
 | | Before | After | Delta |
 |---|---:|---:|---:|
@@ -295,7 +295,8 @@ language-/tool-specific notes I've accumulated over time.
 
 ## Stack
 
-- **Bash 5** (Homebrew)
+- **Bash 3.2+** — runs on macOS system bash out of the box; also tested on
+  Homebrew Bash 5 (`brew install bash`)
 - **bash-completion@2** for lazy command completion
 - **nvm** lazy-loaded on demand
 - No external prompt framework — PS1 built with `__git_ps1` from
