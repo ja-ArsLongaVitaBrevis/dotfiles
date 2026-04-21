@@ -29,7 +29,7 @@ bin/bench-shell.sh 20
 
 ## The problem
 
-The original setup sourced **nine** modules eagerly at startup. The two main
+The original setup sourced **ten** modules eagerly at startup. The two main
 offenders:
 
 - **NVM** — `nvm.sh` is ~4,700 lines. Sourcing it at startup cost ~500 ms–2 s
@@ -62,24 +62,33 @@ Three principles drove the restructure:
 ## Architecture
 
 ```
-.bash_profile              Entry point. Sets DOTFILES_DIR, sources modules in order.
-lib/                       Cross-cutting infrastructure (ordered by load).
-  00-core.sh               Locale, history, BASH_SILENCE_DEPRECATION.
-  10-brew.sh               brew shellenv + bash-completion@2 init.
-  20-aliases.sh            Generic aliases (ls, docker, killPort, ...).
-  30-prompt.sh             PS1 + git-prompt (tuned for speed).
-bin/
-  bench-shell.sh           Timing harness.
-AiTools/     ClaudeBedrock.sh    Claude via Amazon Bedrock (env + alias).
-Python/      python.sh           venv helpers.
-Rust/        rust.sh             Guarded $HOME/.cargo/env source.
-git_setup/   git_setup.sh        Git aliases; sources git-prompt.sh for PS1.
-             git-prompt.sh       Vendor (sourced once).
-             git-completion.bash Vendor (loaded lazily via bash-completion@2).
-dx-tools/aws/ aws.sh             AWS CLI completion + helpers.
-              aws-helpers.sh     Pure-function helper library.
-nvm/         lazy.sh             Lazy stubs for nvm / node / npm / npx.
-             auto-switch.sh      `.nvmrc`-aware cd wrapper (sourced by lazy.sh).
+.
+├── .bash_profile                 Entry point. Resolves DOTFILES_DIR, orders modules.
+│
+├── lib/                          Cross-cutting infrastructure (numeric prefix = load order).
+│   ├── 00-core.sh                Env, history, BASH_SILENCE_DEPRECATION.
+│   ├── 10-brew.sh                brew shellenv + bash-completion@2 init.
+│   ├── 20-aliases.sh             Generic aliases (ls, docker, killPort, ...).
+│   └── 30-prompt.sh              PS1 + git-prompt (tuned for speed).
+│
+├── nvm/                          The biggest startup win.
+│   ├── lazy.sh                   Lazy stubs for nvm / node / npm / npx.
+│   └── auto-switch.sh            .nvmrc-aware cd wrapper (sourced by lazy.sh).
+│
+├── git_setup/
+│   ├── git_setup.sh              Git aliases; sources git-prompt.sh for PS1.
+│   ├── git-prompt.sh             Vendor — sourced once.
+│   └── git-completion.bash       Vendor — loaded lazily via bash-completion@2.
+│
+├── dx-tools/aws/
+│   ├── aws.sh                    AWS CLI completion + helpers.
+│   └── aws-helpers.sh            Pure-function helper library.
+│
+├── AiTools/ClaudeBedrock.sh      Claude via Amazon Bedrock (env + alias).
+├── Python/python.sh              venv helpers.
+├── Rust/rust.sh                  Guarded $HOME/.cargo/env source.
+│
+└── bin/bench-shell.sh            Timing harness.
 ```
 
 **Module-local logic stays in the module.** `nvm/`'s lazy loader lives
@@ -248,7 +257,7 @@ nvm install --lts
 nvm alias default 'lts/*'
 
 # 3. Clone wherever you like:
-git clone https://github.com/jesuarva/dotfiles.git ~/dotfiles    # or ~/code/dotfiles, /opt/dotfiles, etc.
+git clone https://github.com/jesuarva/jesuarva-dotfiles.git ~/dotfiles    # or ~/code/dotfiles, /opt/dotfiles, etc.
 
 # 4. Wire it into ~/.bash_profile (pick one style):
 # Style A — source it:
@@ -292,5 +301,5 @@ language-/tool-specific notes I've accumulated over time.
 - No external prompt framework — PS1 built with `__git_ps1` from
   `git-prompt.sh` (the one that ships with Git itself)
 
-No oh-my-bash, no starship, no powerlevel. The whole system is ~400 lines of
-shell, readable end-to-end.
+No oh-my-bash, no starship, no Powerlevel10k. The whole system is ~400 lines
+of shell, readable end-to-end.

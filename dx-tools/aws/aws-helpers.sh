@@ -88,12 +88,12 @@ function awsUpdateRoleStack() {
     echo AWS_PROFILE=$PROFILE
     echo ROLE-STACK-NAME=$ROLE
 
-    STACK_CREATED='' # We used this as a return value from `awsCreateroleStack`
+    STACK_CREATED='' # We use this as a return value from `awsCreateRoleStack`
     awsCreateRoleStack STACK_CREATED $ROLE $PROFILE
 
     if [ $STACK_CREATED == 'false' ]
     then
-        echo "Waitng for Role creating to finish..."
+        echo "Waiting for Role creating to finish..."
         aws cloudformation wait stack-create-complete \
             --stack-name $ROLE \
             --profile $PROFILE
@@ -107,7 +107,7 @@ function awsUpdateRoleStack() {
         
         if [ $? -ne 254 ]
         then
-            echo "Waitng for Role update to finish..."
+            echo "Waiting for Role update to finish..."
             aws cloudformation wait stack-update-complete \
                 --stack-name $ROLE
         fi
@@ -162,7 +162,7 @@ function awsCreateRoleStack() {
         STACK_EXISTS='true'
     else
         STACK_EXISTS='false'
-        echo "Createing role stack."
+        echo "Creating role stack."
     fi
 
     eval "$1=$STACK_EXISTS"  # Set `return` value to the `$1 arg`, if any.
@@ -277,7 +277,7 @@ function awsRemoveStacks() {
       --stack-name $ROLE \
       --profile $PROFILE
 
-    echo "Waitng for Role deletion to finish..."
+    echo "Waiting for Role deletion to finish..."
       aws cloudformation wait stack-create-complete \
           --stack-name $ROLE \
           --profile $PROFILE

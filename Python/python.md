@@ -37,15 +37,3 @@ python3 -m pip install -r ./requirements.txt
 # VERSION MANAGERS
 
 # CONCEPTS
-
-PATTERN MATCHING
-
-FUNCTIONS
-
-- guard clause : https://elixirschool.com/en/lessons/basics/functions#guards-6
-
-PATTERN MATCHING
-
-```
-
-```

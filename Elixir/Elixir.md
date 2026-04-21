@@ -27,7 +27,7 @@ FIRST: INSTALL `ERLANG`
 $ kerl list releases
 
 # 2.
-$ kerl build <veersion> <version_alias>
+$ kerl build <version> <version_alias>
 ##  e.g. _$ kerl build 27.0 27.0_
 
 # 3.
@@ -48,7 +48,7 @@ $ kerl active
 /usr/local/lib/erlang/27.0
 ```
 
-SECOND INSTALL `ELIXIR` AND USE IT
+SECOND: INSTALL `ELIXIR` AND USE IT
 
 ```sh
 # 1. list Elixir version available
@@ -64,6 +64,4 @@ PATTERN MATCHING
 
 FUNCTIONS
 
-- guard clause : https://elixirschool.com/en/lessons/basics/functions#guards-6
-
-PATTERN MATCHING
+- guard clause: https://elixirschool.com/en/lessons/basics/functions#guards-6

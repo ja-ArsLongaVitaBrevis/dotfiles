@@ -54,22 +54,22 @@ Help to navigate heavily political figures.
 
 - ENJOYMENT OF WORK COMPLETED BY THE TEAM
 
-# OTHERS'S CHALLENGES
+# OTHERS' CHALLENGES
 
-![CHELLENGES 1](image.png)
-![CHALLENGGE 1BIS](image-2.png)
+![CHALLENGES 1](image.png)
+![CHALLENGE 1BIS](image-2.png)
 ![CHALLENGES 2](image-1.png)
 ![CHALLENGES 2BIS](image-4.png)
 
 - Context shifting
 - AI -> ???
-- LArge codebases
+- Large codebases
 
   - Onboarding hard
 
 - AI TOOLS LITERACY
 
-- BALANCE NO LOOSING TECH SKILLS
+- BALANCE NOT LOSING TECH SKILLS
 
 # LINKEDIN
 
@@ -96,5 +96,5 @@ https://www.linkedin.com/in/jonathanfielding/
 Andy W - Headforwards - Cornwall, UK (13 Mar 2025, 18:28)
 https://www.linkedin.com/in/andyrlweir/
 
-WIll (13 Mar 2025, 18:28)
+Will (13 Mar 2025, 18:28)
 https://www.linkedin.com/in/will-fasuyi-a434b0a0/
