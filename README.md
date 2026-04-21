@@ -246,6 +246,10 @@ either of these, both loaded last and both git-ignored:
 
 The repo is **location-independent** — `DOTFILES_DIR` resolves itself from
 `BASH_SOURCE` at load time (following symlinks), so you can clone anywhere.
+It is also **architecture-independent** across macOS: the brew loader probes
+`/opt/homebrew` (Apple Silicon) and `/usr/local` (Intel) in that order, and
+Apple-Silicon-only aliases (e.g. `rosetta2`) are defined conditionally via
+the Bash builtin `$HOSTTYPE`.
 
 ```bash
 # 1. Homebrew + dependencies

@@ -27,8 +27,11 @@ alias npm_get_global_pkgs=get_npm_global_pkgs
 alias docker_stop_all_containers='docker stop $(docker ps -aq)'
 alias drun='docker run -it --rm --network=host -v $(pwd):/opt/work --workdir=/opt/work'
 
-# Apple Silicon: run a shell under Rosetta 2
-alias rosetta2='arch -x86_64 bash --login'
+# Apple Silicon only: run a shell under Rosetta 2. `$HOSTTYPE` is a Bash
+# builtin (no subprocess) and is `arm64` on Apple Silicon, `x86_64` on Intel.
+if [[ "$HOSTTYPE" == "arm64" ]]; then
+  alias rosetta2='arch -x86_64 bash --login'
+fi
 
 # -- Functions -----------------------------------------------------------------
 
