@@ -12,12 +12,28 @@ if [[ -n "$DOTFILES_PROFILE" ]]; then
   set -x
 fi
 
-# Resolve repo root regardless of how this is sourced.
-if [[ -n "${BASH_SOURCE[0]}" ]]; then
-  DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-else
-  DOTFILES_DIR="$HOME/CodeBis/jesuarva-dotfiles"
+# Resolve repo root dynamically. The repo can live anywhere on disk — this
+# block derives its own location from BASH_SOURCE, follows symlinks, and
+# works identically on any device as long as ~/.bash_profile sources (or
+# symlinks to) this file.
+#
+# Supports two install styles:
+#   1) source <repo>/.bash_profile          — absolute or relative path
+#   2) ln -s <repo>/.bash_profile ~/.bash_profile   — symlinked
+_dotfiles_src="${BASH_SOURCE[0]:-}"
+if [[ -z "$_dotfiles_src" ]]; then
+  echo "[dotfiles] ERROR: BASH_SOURCE unavailable; cannot locate repo." >&2
+  unset _dotfiles_src
+  return 1 2>/dev/null || exit 1
 fi
+# Resolve symlink chain manually (macOS lacks `readlink -f`).
+while [[ -L "$_dotfiles_src" ]]; do
+  _dotfiles_dir="$(cd "$(dirname "$_dotfiles_src")" && pwd -P)"
+  _dotfiles_src="$(readlink "$_dotfiles_src")"
+  [[ "$_dotfiles_src" != /* ]] && _dotfiles_src="$_dotfiles_dir/$_dotfiles_src"
+done
+DOTFILES_DIR="$(cd "$(dirname "$_dotfiles_src")" && pwd -P)"
+unset _dotfiles_src _dotfiles_dir
 export DOTFILES_DIR
 
 # Small helper — `require <path>` sources if readable, warns otherwise.

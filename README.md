@@ -235,6 +235,9 @@ either of these, both loaded last and both git-ignored:
 
 ## Setup on a new machine
 
+The repo is **location-independent** — `DOTFILES_DIR` resolves itself from
+`BASH_SOURCE` at load time (following symlinks), so you can clone anywhere.
+
 ```bash
 # 1. Homebrew + dependencies
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -244,12 +247,17 @@ brew install bash-completion@2 git nvm jq
 nvm install --lts
 nvm alias default 'lts/*'
 
-# 3. Clone and wire up
-git clone https://github.com/jesuarva/dotfiles.git ~/CodeBis/jesuarva-dotfiles
-echo 'source ~/CodeBis/jesuarva-dotfiles/.bash_profile' >> ~/.bash_profile
+# 3. Clone wherever you like:
+git clone https://github.com/jesuarva/dotfiles.git ~/dotfiles    # or ~/code/dotfiles, /opt/dotfiles, etc.
 
-# 4. Open a new terminal. Verify:
-bin/bench-shell.sh 10
+# 4. Wire it into ~/.bash_profile (pick one style):
+# Style A — source it:
+echo 'source ~/dotfiles/.bash_profile' >> ~/.bash_profile
+# Style B — symlink it (cleanest; the loader follows the symlink):
+ln -s ~/dotfiles/.bash_profile ~/.bash_profile
+
+# 5. Open a new terminal. Verify:
+cd ~/dotfiles && bin/bench-shell.sh 10
 ```
 
 Optional: AWS CLI v2, Rust (`curl https://sh.rustup.rs -sSf | sh`), Google
