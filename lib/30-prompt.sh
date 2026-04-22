@@ -27,9 +27,16 @@ _c_red='\[\e[1;31m\]'
 _c_yellow='\[\e[93m\]'
 _c_reset='\[\033[0m\]'
 
+# Python venv marker — prints "(venv-name) " when $VIRTUAL_ENV is set, else
+# nothing. We render this ourselves because VIRTUAL_ENV_DISABLE_PROMPT=1
+# (set in Python/python.sh) suppresses activate's own PS1 mangling.
+_venv_ps1() {
+  [[ -n "$VIRTUAL_ENV" ]] && printf '(%s) ' "$(basename "$VIRTUAL_ENV")"
+}
+
 # PS1:
 #   line 1: [timestamp] jobs:N
-#   line 2: user CWD (git-info)
+#   line 2: (venv) user CWD (git-info)
 #   line 3: [history#] $
-PS1="\n${_c_red}\$(/bin/date '+%H:%M:%S')${_c_blue} jobs:\j \n${_c_purple}\u ${_c_light_green}\w ${_c_blue}\$(__git_ps1 \" (%s)\") \n${_c_red}[\!] ${_c_green}$ ${_c_reset}"
+PS1="\n${_c_red}\$(/bin/date '+%H:%M:%S')${_c_blue} jobs:\j \n${_c_yellow}\$(_venv_ps1)${_c_purple}\u ${_c_light_green}\w ${_c_blue}\$(__git_ps1 \" (%s)\") \n${_c_red}[\!] ${_c_green}$ ${_c_reset}"
 export PS1
