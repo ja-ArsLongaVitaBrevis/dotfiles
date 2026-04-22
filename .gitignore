@@ -4,3 +4,6 @@ node_modules
 
 # Per-machine overrides (see README)
 .local.sh
+
+# AI TOOLS
+.claude
