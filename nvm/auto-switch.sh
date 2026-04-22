@@ -4,7 +4,7 @@
 # NOT enabled by default — the old eager `cd` override triggered `nvm use`
 # on every directory change, which is slow. Enable per-session with:
 #
-#     source ~/CodeBis/jesuarva-dotfiles/nvm/auto-switch.sh
+#     source ${DOTFILES_DIR}/jesuarva-dotfiles/nvm/auto-switch.sh
 #
 # Or enable always by uncommenting the line in nvm/lazy.sh.
 
