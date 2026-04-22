@@ -61,6 +61,7 @@ _dotfiles_require "$DOTFILES_DIR/AiTools/ClaudeBedrock.sh"
 
 # --- Lazy loaders (stubs for expensive tools) ---------------------------------
 _dotfiles_require "$DOTFILES_DIR/nvm/lazy.sh"
+_dotfiles_require "$DOTFILES_DIR/git_setup/lazy.sh"
 
 # --- Prompt (last, so all git_ps1 config is in scope) -------------------------
 _dotfiles_require "$DOTFILES_DIR/lib/30-prompt.sh"

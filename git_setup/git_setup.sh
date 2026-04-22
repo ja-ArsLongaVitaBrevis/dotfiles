@@ -20,10 +20,12 @@ git_checkout_to_tag() {
   git checkout "$(git rev-list -n 1 "$1")"
 }
 
-# Opt-in: fully load git-completion.bash now (instead of lazy-on-TAB).
-# Usage: `git_completion_load` in a shell that needs it.
+# Force-load git-completion.bash right now. Usually NOT needed — git_setup/
+# lazy.sh auto-loads it on the first TAB after `git`/`gitk`. Useful for
+# tooling that needs completions registered up front (e.g. completion tests,
+# or scripts that inspect the completion function table).
 git_completion_load() {
-  local f="${DOTFILES_DIR:-$HOME/CodeBis/jesuarva-dotfiles}/git_setup/git-completion.bash"
+  local f="${DOTFILES_DIR}/git_setup/git-completion.bash"
   if [[ -r "$f" ]]; then
     # shellcheck source=/dev/null
     source "$f"
