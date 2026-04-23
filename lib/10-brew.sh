@@ -1,3 +1,15 @@
+# The Homebrew installer does NOT modify PATH for the running shell — it only
+# prints a "Next steps" hint. Without this block the very next line (`nvm
+# install`, which uses `curl`/`bash`, is fine — but any later `brew install`
+# would fail with "brew: command not found"). Probe both standard prefixes so
+# the same script works on Apple Silicon (M1/M2/M3/M4/M5 → /opt/homebrew) and
+# Intel (→ /usr/local).
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
 # shellcheck shell=bash
 # Homebrew setup. One `brew shellenv` call (cached via export), and a single
 # completion entry point — NOT a loop over every completion file.
