@@ -1,0 +1,19 @@
+# dotfiles:identity:{{ID}} — managed by git_setup/identities/bootstrap.sh
+# DO NOT EDIT BY HAND. Re-render with:
+#   git_setup/identities/bootstrap.sh --id {{ID}} ...
+# The whole file is rewritten on every bootstrap run.
+
+[user]
+	name       = {{NAME}}
+	email      = {{EMAIL}}
+	signingKey = {{SIGN_PUB_PATH}}
+
+[core]
+	# Belt-and-braces: even if a repo was cloned as plain git@github.com:…
+	# (instead of git@{{HOST_ALIAS}}:…), the auth key is still pinned here.
+	sshCommand = ssh -i {{AUTH_PUB_PATH}} -o IdentitiesOnly=yes
+
+# Rewrite plain github.com URLs to the per-identity host alias on the fly.
+# Only applies inside this identity's gitdir (via the parent [includeIf]).
+[url "git@{{HOST_ALIAS}}:"]
+	insteadOf = git@github.com:

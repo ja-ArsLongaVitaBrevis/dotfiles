@@ -19,8 +19,8 @@ Copy and paste the following script into your terminal. Before hitting Enter, **
 ```bash
 git filter-branch --env-filter '
 OLD_EMAIL="your_old@email.com"
-CORRECT_NAME="Your Correct Name"
-CORRECT_EMAIL="your_new@email.com"
+CORRECT_NAME="User Name"
+CORRECT_EMAIL="user@example.com"
 
 if [ "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" ]
 then

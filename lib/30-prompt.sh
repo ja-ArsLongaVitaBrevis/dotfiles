@@ -132,7 +132,7 @@ _venv_ps1() {
 
 # Compact CWD (fish-style): leaf stays full, parents collapse to their
 # first char (preserving a leading dot for hidden dirs).
-#   ~/Code/jesuarva-github/jesuarva-dotfiles  →  ~/C/j/jesuarva-dotfiles
+#   ~/Code<identity>/dotfiles  →  ~/C/j/dotfiles
 _pwd_ps1() {
   local p="$PWD"
   [[ "$p" == "$HOME" || "$p" == "$HOME"/* ]] && p="~${p#$HOME}"

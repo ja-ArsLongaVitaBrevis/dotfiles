@@ -1,0 +1,26 @@
+# dotfiles:identities:global — managed by git_setup/identities/bootstrap.sh
+# Safe to edit by hand; bootstrap.sh only seeds this file on first run
+# (detected via the sentinel line above) and never rewrites it afterwards.
+#
+# Per-identity [includeIf] blocks are appended below this file by
+# bootstrap.sh, fenced between:
+#   # >>> dotfiles:identity:<id> >>>
+#   # <<< dotfiles:identity:<id> <<<
+# Re-running bootstrap.sh for the same --id replaces the block in place.
+
+[user]
+	# Strict fail-closed: every repo MUST resolve user.email via an
+	# [includeIf] block below. Repos outside any managed ~/Code<Id>/ root
+	# will refuse to commit with "no name was given" — on purpose.
+	useConfigOnly = true
+
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+	allowedSignersFile = ~/.ssh/allowed_signers
+
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true

@@ -12,3 +12,13 @@ node_modules
 # FONTS
 CascadiaCode-2111.01
 JetBrainsMonoNerd
+
+# Git identities — bootstrap.sh-managed files must NEVER be committed here.
+# They live in $HOME, not the repo; these patterns exist as a safety net in
+# case someone accidentally copies them into the working tree.
+.gitconfig
+.gitconfig-*
+.ssh/
+allowed_signers
+# Backups produced by bootstrap.sh
+*.bak.[0-9]*

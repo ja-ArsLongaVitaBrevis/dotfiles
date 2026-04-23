@@ -78,7 +78,12 @@ Three principles drove the restructure:
 ├── git_setup/
 │   ├── git_setup.sh              Git aliases; sources git-prompt.sh for PS1.
 │   ├── git-prompt.sh             Vendor — sourced once.
-│   └── git-completion.bash       Vendor — loaded lazily via bash-completion@2.
+│   ├── git-completion.bash       Vendor — loaded lazily via bash-completion@2.
+│   └── identities/               Multi-identity routing (directory = identity).
+│       ├── identities.sh         Runtime helpers + 1Password agent wiring.
+│       ├── bootstrap.sh          Provision one identity; idempotent.
+│       ├── lib/                  Pure helper libs (pubkey, fenced-block, allowed_signers).
+│       └── templates/            gitconfig + ssh-config templates.
 │
 ├── dx-tools/aws/
 │   ├── aws.sh                    AWS CLI completion + helpers.
@@ -197,6 +202,37 @@ source "$DOTFILES_DIR/nvm/auto-switch.sh"
 
 Default shells keep a bare `cd` builtin with zero overhead.
 
+### Directory-scoped git identities
+
+Multiple git users on one box used to mean: run `git config user.email …`
+in every repo, forget once, and silently attribute commits to the wrong
+account. `git_setup/identities/` replaces that with a **directory =
+identity** contract:
+
+```gitconfig
+# ~/.gitconfig — seeded once by bootstrap.sh
+[user]
+    useConfigOnly = true          # fail-closed: commits outside a managed root error
+[includeIf "gitdir:~/Code<identity>/"]
+    path = ~/.gitconfig-<identity>      # renders user.*, signingKey, core.sshCommand
+[includeIf "gitdir:~/CodeWork/"]
+    path = ~/.gitconfig-work
+```
+
+Each identity gets a per-account `github.com-<id>` SSH host alias in
+`~/.ssh/config` (auth key pinned via `IdentitiesOnly yes`), a signing
+`.pub` registered in `~/.ssh/allowed_signers`, and a URL-rewrite so
+`git clone git@github.com:…` inside the identity root transparently
+becomes `git@github.com-<id>:…`.
+
+All private keys live in 1Password; `identities.sh` auto-wires
+`SSH_AUTH_SOCK` when the agent socket exists. Provisioning one identity
+= one shell call to `bootstrap.sh` (idempotent, fenced-block edits, with
+`--dry-run` and `--remove`).
+
+See [`git_setup/identities/README.md`](git_setup/identities/README.md)
+for the full flow.
+
 ---
 
 ## Profiling
@@ -289,11 +325,11 @@ fi
 
 # Clone wherever you like:
 ## Pick any location — then reuse $DOTFILES_DIR in the rest of this setup.
-LOCATION="$HOME/CodeJean"
+LOCATION="$HOME/Code<identity>"
 [[ -d $LOCATION ]] || mkdir ${LOCATION}
 
 DOTFILES_DIR="$LOCATION/dotfiles"
-git clone https://github.com/jesuarva/jesuarva-dotfiles.git "$DOTFILES_DIR"
+git clone git@github.com:ja-ArsLongaVitaBrevis/dotfiles.git "$DOTFILES_DIR"
 ## Wire it into ~/.bash_profile (create the file if it doesn't exist yet
 [[ -f ~/.bash_profile ]] || touch ~/.bash_profile
 echo "source \"$DOTFILES_DIR/.bash_profile\"" >> ~/.bash_profile
@@ -356,6 +392,7 @@ language-/tool-specific notes I've accumulated over time.
 | `Python/`                 | venv helpers + Python notes                                          |
 | `Rust/`                   | Cargo env sourcing                                                   |
 | `git_setup/`              | Git aliases, `git-prompt.sh`, lazy `git-completion.bash`             |
+| `git_setup/identities/`   | Multi-identity routing (directory = identity) + 1Password SSH signing |
 | `dx-tools/aws/`           | AWS CLI completion + a helper library for IAM role / stack workflows |
 | `nvm/`                    | Opt-in `.nvmrc` auto-switch                                          |
 | `Elixir/`, `GoogleCloud/` | Notes (no active shell config)                                       |

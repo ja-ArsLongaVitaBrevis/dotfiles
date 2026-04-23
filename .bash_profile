@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# jesuarva-dotfiles entry point.
+# `dotfiles` repo entry point.
 #
 # Architecture: lib/ is infrastructure, each top-level dir is a tool module.
 # Modules are sourced in a deliberate order (cheap → lazy). See README.md.
@@ -55,6 +55,7 @@ _dotfiles_require "$DOTFILES_DIR/lib/20-aliases.sh"
 # Each is cheap (aliases, env vars, function defs only). No eager subprocesses.
 _dotfiles_require "$DOTFILES_DIR/dx-tools/aws/aws.sh"
 _dotfiles_require "$DOTFILES_DIR/git_setup/git_setup.sh"
+_dotfiles_require "$DOTFILES_DIR/git_setup/identities/identities.sh"
 _dotfiles_require "$DOTFILES_DIR/Python/python.sh"
 _dotfiles_require "$DOTFILES_DIR/Rust/rust.sh"
 _dotfiles_require "$DOTFILES_DIR/AiTools/ClaudeBedrock.sh"
