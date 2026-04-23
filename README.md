@@ -244,10 +244,6 @@ either of these, both loaded last and both git-ignored:
 
 ## Setup on a new machine
 
-REQUIREMENTS:
-
-- `Xcode` => App Store > install Xcode
-
 The repo is **location-independent** — `DOTFILES_DIR` resolves itself from
 `BASH_SOURCE` at load time (following symlinks), so you can clone anywhere.
 It is also **architecture-independent** across macOS: the brew loader probes
@@ -256,27 +252,58 @@ Apple-Silicon-only aliases (e.g. `rosetta2`) are defined conditionally via
 the Bash builtin `$HOSTTYPE`.
 
 ```bash
+
+# Xcode Command Line Tools — the lightweight dev bundle Apple ships separately
+# from the full Xcode.app. Required here because it provides `git` (used to
+# clone this repo) and the toolchain Homebrew needs to build from source.
+# Opens a GUI dialog; wait for it to finish before continuing. No-op if
+# already installed.
+#
+# What you get (key tools; not exhaustive):
+#   - git                  — version control
+#   - clang / clang++      — Apple's C / C++ / Objective-C compiler
+#   - make, ld, ar, nm,    — build + binutils-style tools
+#     strip, lipo, otool
+#   - lldb                 — debugger
+#   - swift                — Swift compiler + REPL
+#   - python3, perl, ruby  — Apple's bundled scripting runtimes
+#   - xcrun, xcode-select  — toolchain selectors
+#   - SDK headers          — under /Library/Developer/CommandLineTools/SDKs/
+#
+# Note: `brew install git` below installs a newer git over Apple's (and ships
+# the contrib completion/prompt scripts this repo sources).
+#
+# Caveat: `xcode-select --install` only *triggers* the GUI installer and
+# returns immediately — it does NOT block until the install finishes. We
+# poll `xcode-select -p` so the rest of the script doesn't race ahead and
+# fail with "git: command not found".
+if ! xcode-select -p >/dev/null 2>&1; then
+  xcode-select --install 2>/dev/null || true
+  printf 'Waiting for Xcode Command Line Tools to finish installing'
+  until xcode-select -p >/dev/null 2>&1; do
+    printf '.'
+    sleep 5
+  done
+  printf '\nXcode Command Line Tools installed.\n'
+fi
+
 # Clone wherever you like:
-# Pick any location — then reuse $DOTFILES_DIR in the rest of this setup.
-DOTFILES_DIR="$HOME/dotfiles"   # or ~/code/dotfiles, /opt/dotfiles, etc.
+## Pick any location — then reuse $DOTFILES_DIR in the rest of this setup.
+DOTFILES_DIR="$HOME/CodeJean/dotfiles"   # or ~/code/dotfiles, /opt/dotfiles, etc.
 git clone https://github.com/jesuarva/jesuarva-dotfiles.git "$DOTFILES_DIR"
+## Wire it into ~/.bash_profile:
+echo "source \"$DOTFILES_DIR/.bash_profile\"" >> ~/.bash_profile
+source ~/.bash_profile
 
 # Homebrew + dependencies
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install bash-completion@2 git jq
 
-## nvm
+# nv
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
-
-# Set a default Node so stubs can expose it on PATH
+## Set a default Node so stubs can expose it on PATH
 nvm install --lts
 nvm alias default 'lts/*'
 
-# Wire it into ~/.bash_profile (pick one style):
-## Style A — source it (path resolves from $DOTFILES_DIR set above):
-echo "source \"$DOTFILES_DIR/.bash_profile\"" >> ~/.bash_profile
-# ## Style B — symlink it (cleanest; the loader follows the symlink):
-# ln -s "$DOTFILES_DIR/.bash_profile" ~/.bash_profile
 
 # Open a new terminal. Verify:
 cd "$DOTFILES_DIR" && bin/bench-shell.sh 10
