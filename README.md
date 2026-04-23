@@ -289,9 +289,13 @@ fi
 
 # Clone wherever you like:
 ## Pick any location — then reuse $DOTFILES_DIR in the rest of this setup.
-DOTFILES_DIR="$HOME/CodeJean/dotfiles"   # or ~/code/dotfiles, /opt/dotfiles, etc.
+LOCATION="$HOME/CodeJean"
+[[ -d $LOCATION ]] || mkdir ${LOCATION}
+
+DOTFILES_DIR="$LOCATION/dotfiles"
 git clone https://github.com/jesuarva/jesuarva-dotfiles.git "$DOTFILES_DIR"
-## Wire it into ~/.bash_profile:
+## Wire it into ~/.bash_profile (create the file if it doesn't exist yet
+[[ -f ~/.bash_profile ]] || touch ~/.bash_profile
 echo "source \"$DOTFILES_DIR/.bash_profile\"" >> ~/.bash_profile
 source ~/.bash_profile
 
