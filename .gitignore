@@ -1,6 +1,7 @@
 node_modules
 .DS_Store
 .venv
+.vscode
 
 # Per-machine overrides (see README)
 .local.sh
