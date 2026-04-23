@@ -12,12 +12,12 @@ losing any functionality.
 Measured on Apple Silicon (M-series) with macOS system bash (3.2.57), 20
 samples of `bash -lic exit`:
 
-| | Before | After | Delta |
-|---|---:|---:|---:|
-| Median startup | 1.010 s | 0.030 s | **−97 %** |
-| Mean startup | 1.016 s | 0.031 s | **−97 %** |
-| Worst-case (p100) | 1.02 s | 0.050 s | **−95 %** |
-| `.bash_profile` LOC | 127 | 62 | −51 % |
+|                     |  Before |   After |     Delta |
+| ------------------- | ------: | ------: | --------: |
+| Median startup      | 1.010 s | 0.030 s | **−97 %** |
+| Mean startup        | 1.016 s | 0.031 s | **−97 %** |
+| Worst-case (p100)   |  1.02 s | 0.050 s | **−95 %** |
+| `.bash_profile` LOC |     127 |      62 |     −51 % |
 
 Reproduce on your machine:
 
@@ -224,11 +224,11 @@ DOTFILES_PROFILE=1 bash -lic exit 2> /tmp/trace.log
 All off by default; enable per session or by uncommenting a single line in
 `nvm/lazy.sh`.
 
-| Feature | Why it's off | Enable |
-|---|---|---|
-| `nvm`-aware `cd` auto-switch | Adds per-`cd` cost even outside Node projects | `source $DOTFILES_DIR/nvm/auto-switch.sh` |
-| AWS CLI auto-prompt | Adds latency to every `aws` invocation | `export AWS_CLI_AUTO_PROMPT=on` |
-| Eager git completion | 71 KB script; bash-completion@2 handles it lazily | `git_completion_load` |
+| Feature                      | Why it's off                                      | Enable                                    |
+| ---------------------------- | ------------------------------------------------- | ----------------------------------------- |
+| `nvm`-aware `cd` auto-switch | Adds per-`cd` cost even outside Node projects     | `source $DOTFILES_DIR/nvm/auto-switch.sh` |
+| AWS CLI auto-prompt          | Adds latency to every `aws` invocation            | `export AWS_CLI_AUTO_PROMPT=on`           |
+| Eager git completion         | 71 KB script; bash-completion@2 handles it lazily | `git_completion_load`                     |
 
 ---
 
@@ -244,6 +244,10 @@ either of these, both loaded last and both git-ignored:
 
 ## Setup on a new machine
 
+REQUIREMENTS:
+
+- `Xcode` => App Store > install Xcode
+
 The repo is **location-independent** — `DOTFILES_DIR` resolves itself from
 `BASH_SOURCE` at load time (following symlinks), so you can clone anywhere.
 It is also **architecture-independent** across macOS: the brew loader probes
@@ -252,25 +256,30 @@ Apple-Silicon-only aliases (e.g. `rosetta2`) are defined conditionally via
 the Bash builtin `$HOSTTYPE`.
 
 ```bash
-# 1. Homebrew + dependencies
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install bash-completion@2 git nvm jq
+# Clone wherever you like:
+# Pick any location — then reuse $DOTFILES_DIR in the rest of this setup.
+DOTFILES_DIR="$HOME/dotfiles"   # or ~/code/dotfiles, /opt/dotfiles, etc.
+git clone https://github.com/jesuarva/jesuarva-dotfiles.git "$DOTFILES_DIR"
 
-# 2. Set a default Node so stubs can expose it on PATH
+# Homebrew + dependencies
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew install bash-completion@2 git jq
+
+## nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+
+# Set a default Node so stubs can expose it on PATH
 nvm install --lts
 nvm alias default 'lts/*'
 
-# 3. Clone wherever you like:
-git clone https://github.com/jesuarva/jesuarva-dotfiles.git ~/dotfiles    # or ~/code/dotfiles, /opt/dotfiles, etc.
+# Wire it into ~/.bash_profile (pick one style):
+## Style A — source it (path resolves from $DOTFILES_DIR set above):
+echo "source \"$DOTFILES_DIR/.bash_profile\"" >> ~/.bash_profile
+# ## Style B — symlink it (cleanest; the loader follows the symlink):
+# ln -s "$DOTFILES_DIR/.bash_profile" ~/.bash_profile
 
-# 4. Wire it into ~/.bash_profile (pick one style):
-# Style A — source it:
-echo 'source ~/dotfiles/.bash_profile' >> ~/.bash_profile
-# Style B — symlink it (cleanest; the loader follows the symlink):
-ln -s ~/dotfiles/.bash_profile ~/.bash_profile
-
-# 5. Open a new terminal. Verify:
-cd ~/dotfiles && bin/bench-shell.sh 10
+# Open a new terminal. Verify:
+cd "$DOTFILES_DIR" && bin/bench-shell.sh 10
 ```
 
 Optional: AWS CLI v2, Rust (`curl https://sh.rustup.rs -sSf | sh`), Google
@@ -283,17 +292,17 @@ Cloud SDK.
 Each module directory holds its script(s) plus a `.md` with the
 language-/tool-specific notes I've accumulated over time.
 
-| Directory | What's in it |
-|---|---|
-| `lib/` | Infrastructure loaded on every shell |
-| `bin/` | Executables in the repo (currently just the benchmark) |
-| `AiTools/` | Claude + Bedrock environment |
-| `Python/` | venv helpers + Python notes |
-| `Rust/` | Cargo env sourcing |
-| `git_setup/` | Git aliases, `git-prompt.sh`, lazy `git-completion.bash` |
-| `dx-tools/aws/` | AWS CLI completion + a helper library for IAM role / stack workflows |
-| `nvm/` | Opt-in `.nvmrc` auto-switch |
-| `Elixir/`, `GoogleCloud/` | Notes (no active shell config) |
+| Directory                 | What's in it                                                         |
+| ------------------------- | -------------------------------------------------------------------- |
+| `lib/`                    | Infrastructure loaded on every shell                                 |
+| `bin/`                    | Executables in the repo (currently just the benchmark)               |
+| `AiTools/`                | Claude + Bedrock environment                                         |
+| `Python/`                 | venv helpers + Python notes                                          |
+| `Rust/`                   | Cargo env sourcing                                                   |
+| `git_setup/`              | Git aliases, `git-prompt.sh`, lazy `git-completion.bash`             |
+| `dx-tools/aws/`           | AWS CLI completion + a helper library for IAM role / stack workflows |
+| `nvm/`                    | Opt-in `.nvmrc` auto-switch                                          |
+| `Elixir/`, `GoogleCloud/` | Notes (no active shell config)                                       |
 
 ---
 
