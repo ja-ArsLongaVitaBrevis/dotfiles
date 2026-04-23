@@ -302,16 +302,41 @@ source ~/.bash_profile
 # Homebrew + dependencies
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# nv
+# nvm
+## The NVM install script APPENDS an eager `. nvm.sh` block to ~/.bash_profile.
+## That block defeats nvm/lazy.sh and adds ~0.25 s to every new shell on Apple
+## Silicon. Strip it out right after install, then re-source.
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
-## Set a default Node so stubs can expose it on PATH
+sed -i.bak '/NVM_DIR/d;/nvm\.sh/d;/nvm.*bash_completion/d' ~/.bash_profile && rm ~/.bash_profile.bak
+source ~/.bash_profile
 nvm install --lts
 nvm alias default 'lts/*'
 
 
-# Open a new terminal. Verify:
+# Open a new terminal. Verify — target ≤0.10 s median on Apple Silicon,
+# ≤0.05 s on Intel. The bench script also runs a "doctor" pass that warns
+# on known footguns (eager NVM, eager `rbenv init`, etc).
 cd "$DOTFILES_DIR" && bin/bench-shell.sh 10
 ```
+
+### Troubleshooting slow startup
+
+If `bin/bench-shell.sh` reports > 0.20 s median on Apple Silicon, run:
+
+```bash
+bin/bench-shell.sh doctor   # audit ~/.bash_profile for known perf footguns
+bin/bench-shell.sh 1 trace  # per-line xtrace — slowest 20 lines
+```
+
+The most common culprit is an eager `\. "$NVM_DIR/nvm.sh"` block in
+`~/.bash_profile` (the NVM install script adds it unconditionally). That one
+line alone cost 0.25–0.30 s per shell on an M5 — fixed by delegating to
+`nvm/lazy.sh`. `~/.bash_profile` should be a single line:
+
+```bash
+source "$DOTFILES_DIR/.bash_profile"
+```
+
 
 Optional: AWS CLI v2, Rust (`curl https://sh.rustup.rs -sSf | sh`), Google
 Cloud SDK.

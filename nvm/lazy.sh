@@ -1,13 +1,30 @@
 # shellcheck shell=bash
 # NVM lazy-load — sourced from .bash_profile.
 #
-# Why: the real nvm.sh is ~4,700 lines; sourcing it at startup costs 500 ms–2 s.
-# Instead, define stubs for `nvm`, `node`, `npm`, `npx`. First call unsets the
-# stubs, sources the real nvm.sh, and re-invokes the command.
+# Why: the real nvm.sh is ~4,700 lines; sourcing it at startup costs 250 ms–2 s
+# on Apple Silicon. Instead, define stubs for `nvm`, `node`, `npm`, `npx`.
+# First call unsets the stubs, sources the real nvm.sh, and re-invokes the
+# command.
+#
+# COMMON FOOTGUN: many NVM install instructions append an EAGER loader block
+# (`[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"`) to `~/.bash_profile`.
+# If that block runs AFTER this file, it defeats the lazy loader entirely.
+# See `bin/bench-shell.sh` — an interactive login shell should measure ≤0.10 s
+# on any modern Mac; if you see 0.30 s+, grep ~/.bash_profile for `nvm.sh`
+# and remove any eager source line.
 
 export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
-if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+# Skip defining stubs if nvm is already a loaded function (someone else beat
+# us to it — probably the eager loader described above). In that case the
+# real `nvm` is already in scope; defining stubs would be a no-op at best
+# and could mask bugs at worst. Emit a hint only in profile mode.
+if declare -F nvm >/dev/null 2>&1; then
+  if [[ -n "${DOTFILES_PROFILE:-}" ]]; then
+    echo "[dotfiles] nvm is already loaded before nvm/lazy.sh ran — "   >&2
+    echo "[dotfiles] check ~/.bash_profile for an eager \`. nvm.sh\` block." >&2
+  fi
+elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
   _load_nvm() {
     unset -f nvm node npm npx _load_nvm
     # shellcheck source=/dev/null

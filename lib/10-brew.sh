@@ -1,23 +1,15 @@
-# The Homebrew installer does NOT modify PATH for the running shell — it only
-# prints a "Next steps" hint. Without this block the very next line (`nvm
-# install`, which uses `curl`/`bash`, is fine — but any later `brew install`
-# would fail with "brew: command not found"). Probe both standard prefixes so
-# the same script works on Apple Silicon (M1/M2/M3/M4/M5 → /opt/homebrew) and
-# Intel (→ /usr/local).
-if [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -x /usr/local/bin/brew ]]; then
-  eval "$(/usr/local/bin/brew shellenv)"
-fi
-
 # shellcheck shell=bash
-# Homebrew setup. One `brew shellenv` call (cached via export), and a single
-# completion entry point — NOT a loop over every completion file.
+# Homebrew setup. ONE `brew shellenv` subprocess per shell, no for-loop over
+# completion files (we use bash-completion@2's lazy loader instead).
 #
 # Handles:
 #   - Apple Silicon Macs (default brew prefix: /opt/homebrew)
 #   - Intel Macs         (default brew prefix: /usr/local)
 #   - Custom installs    (HOMEBREW_PREFIX pre-set, or brew already on PATH)
+#
+# Perf note: `brew shellenv` forks + execs Ruby. On Apple Silicon that costs
+# ~30–50 ms. We deliberately run it EXACTLY ONCE per shell. An earlier version
+# of this file called it twice — that's been merged into the block below.
 
 _brew_cmd=""
 if [[ -n "$HOMEBREW_PREFIX" && -x "$HOMEBREW_PREFIX/bin/brew" ]]; then
