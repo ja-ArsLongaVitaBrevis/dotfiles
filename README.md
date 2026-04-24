@@ -76,9 +76,15 @@ Three principles drove the restructure:
 │   └── auto-switch.sh            .nvmrc-aware cd wrapper (sourced by lazy.sh).
 │
 ├── git_setup/
+│   ├── README.md                 Module index + links to how-to guides.
 │   ├── git_setup.sh              Git aliases; sources git-prompt.sh for PS1.
 │   ├── git-prompt.sh             Vendor — sourced once.
 │   ├── git-completion.bash       Vendor — loaded lazily via bash-completion@2.
+│   ├── lazy.sh                   Defers git-completion registration until first TAB.
+│   ├── howto/                    Standalone history-surgery recipes.
+│   │   ├── sign-commits-with-ssh.md
+│   │   ├── sign-past-commits.md
+│   │   └── rewrite-author-email.md
 │   └── identities/               Multi-identity routing (directory = identity).
 │       ├── identities.sh         Runtime helpers + 1Password agent wiring.
 │       ├── bootstrap.sh          Provision one identity; idempotent.
@@ -89,7 +95,9 @@ Three principles drove the restructure:
 │   ├── aws.sh                    AWS CLI completion + helpers.
 │   └── aws-helpers.sh            Pure-function helper library.
 │
-├── AiTools/ClaudeBedrock.sh      Claude via Amazon Bedrock (env + alias).
+├── AiTools/
+│   ├── README.md                 Module docs: Claude/Bedrock env vars + Vertex AI auth.
+│   └── ClaudeBedrock.sh          Claude via Amazon Bedrock (env + alias).
 ├── Python/python.sh              venv helpers.
 ├── Rust/rust.sh                  Guarded $HOME/.cargo/env source.
 │
@@ -381,21 +389,24 @@ Cloud SDK.
 
 ## Repository layout
 
-Each module directory holds its script(s) plus a `.md` with the
-language-/tool-specific notes I've accumulated over time.
+Each module directory owns its scripts and a `README.md` with notes accumulated
+over time. Every `README.md` is browsable directly on GitHub.
 
-| Directory                 | What's in it                                                         |
-| ------------------------- | -------------------------------------------------------------------- |
-| `lib/`                    | Infrastructure loaded on every shell                                 |
-| `bin/`                    | Executables in the repo (currently just the benchmark)               |
-| `AiTools/`                | Claude + Bedrock environment                                         |
-| `Python/`                 | venv helpers + Python notes                                          |
-| `Rust/`                   | Cargo env sourcing                                                   |
-| `git_setup/`              | Git aliases, `git-prompt.sh`, lazy `git-completion.bash`             |
-| `git_setup/identities/`   | Multi-identity routing (directory = identity) + 1Password SSH signing |
-| `dx-tools/aws/`           | AWS CLI completion + a helper library for IAM role / stack workflows |
-| `nvm/`                    | Opt-in `.nvmrc` auto-switch                                          |
-| `Elixir/`, `GoogleCloud/` | Notes (no active shell config)                                       |
+| Directory               | What's in it                                                          |
+| ----------------------- | --------------------------------------------------------------------- |
+| `lib/`                  | Infrastructure loaded on every shell                                  |
+| `bin/`                  | Executables (currently just the benchmark)                            |
+| `nvm/`                  | Biggest startup win — lazy stubs + opt-in `.nvmrc` auto-switch        |
+| `git_setup/`            | Aliases, `git-prompt.sh`, lazy `git-completion.bash`; [README](git_setup/README.md) |
+| `git_setup/howto/`      | History-surgery recipes (sign, rewrite, retroactive Verified badge)   |
+| `git_setup/identities/` | Multi-identity routing (directory = identity) + 1Password SSH signing; [README](git_setup/identities/README.md) |
+| `dx-tools/aws/`         | AWS CLI completion + a helper library for IAM role / stack workflows  |
+| `AiTools/`              | Claude Code via Bedrock env vars + Vertex AI auth; [README](AiTools/README.md) |
+| `Python/`               | venv helpers + notes; [README](Python/README.md)                      |
+| `Rust/`                 | `cargo` env sourcing + install notes; [README](Rust/README.md)        |
+| `Elixir/`               | Kiex / Kerl install notes; [README](Elixir/README.md)                 |
+| `GoogleCloud/`          | `gcloud` ADC auth notes; [README](GoogleCloud/README.md)              |
+| `Java/`                 | jenv + Sdkman + Gradle notes; [README](Java/README.md)                |
 
 ---
 

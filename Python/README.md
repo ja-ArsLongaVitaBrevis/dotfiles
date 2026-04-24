@@ -1,11 +1,17 @@
-# INSTALLATION
+# Python
 
-# VIRTUAL ENVIRONMENT
+> Back to → [dotfiles root](../README.md)
+
+Useful references and workflow notes for Python on macOS.
+
+---
+
+## Virtual environment
 
 - https://docs.python.org/3/library/venv.html
 - https://packaging.python.org/en/latest/tutorials/installing-packages/
 
-## INSTALLING DEPS IN .VENV & CREATING VIRTUAL ENV:
+## Installing deps in `.venv` — workflow
 
 Follow steps in order:
 
@@ -34,6 +40,6 @@ python3 -m pip install -r /path/to/requirements.txt
 python3 -m pip install -r ./requirements.txt
 ```
 
-# VERSION MANAGERS
+## Version managers
 
-# CONCEPTS
+Consider [pyenv](https://github.com/pyenv/pyenv) for managing multiple Python versions. It can be lazy-loaded with the same stub pattern used for `nvm` in this repo — see [the lazy-loading section in the root README](../README.md#lazy-loading-pattern).

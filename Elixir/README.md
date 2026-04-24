@@ -1,4 +1,10 @@
-# INSTALLATION
+# Elixir
+
+> Back to → [dotfiles root](../README.md)
+
+---
+
+## Installation
 
 https://elixir-lang.org/install.html
 
@@ -6,17 +12,17 @@ When installing Elixir, Erlang is generally installed automatically for you. [@s
 
 Keep in mind that each Elixir version supports specific Erlang/OTP versions. [See the supported versions](https://elixir-lang.org/docs).
 
-# [VERSION MANAGERS](https://elixir-lang.org/install.html#version-managers)
+## [Version managers](https://elixir-lang.org/install.html#version-managers)
 
-## ELIXIR VERSION MANAGER:
+### Elixir version manager
 
 [Kiex](https://github.com/taylor/kiex)
 
-## ERLANG VERSION MANAGER:
+### Erlang version manager
 
 [Kerl](https://github.com/kerl/kerl)
 
-### HOW TO INSTALL A VERSION
+#### How to install a version
 
 FIRST: INSTALL `ERLANG`
 
@@ -58,7 +64,7 @@ kiex list
 kiex use elixir-1.16.0-26
 ```
 
-# CONCEPTS
+## Concepts
 
 PATTERN MATCHING
 

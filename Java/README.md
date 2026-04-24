@@ -1,11 +1,15 @@
-# REQUIREMENTS
+# Java
+
+> Back to → [dotfiles root](../README.md)
+
+---
+
+## Requirements
 
 - Install [AndroidStudio](https://developer.android.com/studio)
 - Install [jenv](https://www.jenv.be/) : Java version manager
   - `jenv` does not install Java versions but manage the ones installed
 - Install [Sdkman](https://sdkman.io/install)
-
-# JAVA
 
 ## Gradle
 
@@ -30,7 +34,7 @@ To manage versions:
 
 - Set up [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html).
 
-## Java versions:
+## Java versions
 
 We install versions manually via `Oracle Java Downloads`.
 We `manage Java versions` via `jenv`.
