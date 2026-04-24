@@ -7,6 +7,9 @@ alias ls='ls -GFh'
 alias lsa='ls -al'
 alias la='ls -al'
 
+# AI tools shortcuts
+alias gemini='npx @google/gemini-cli'
+
 # System info
 alias get_os_cores='sysctl hw.physicalcpu hw.logicalcpu'
 alias get_process_running_in_port='lsof -i tcp:'

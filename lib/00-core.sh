@@ -13,3 +13,5 @@ shopt -s histappend 2>/dev/null || true
 # Re-source this whole setup easily.
 alias source_bash_profile='source ~/.bash_profile'
 alias reload='source ~/.bash_profile'
+
+export PATH="$HOME/.local/bin:$PATH"

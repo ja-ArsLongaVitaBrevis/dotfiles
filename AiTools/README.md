@@ -6,6 +6,21 @@ Shell environment for **Claude Code via Amazon Bedrock**.
 
 ---
 
+## Installation
+
+To install common AI CLI tools (like Claude Code, Gemini CLI, and Aider), run:
+
+```bash
+bash AiTools/install.sh
+```
+
+---
+
+## Gemini CLI
+
+The `gemini` command is aliased to `npx @google/gemini-cli` in `lib/20-aliases.sh`. This ensures it runs on-the-fly without requiring a permanent global installation, following the [official documentation](https://geminicli.com/docs/get-started/installation/#run-gemini-cli).
+
+---
 ## ClaudeBedrock.sh
 
 Source: [`ClaudeBedrock.sh`](./ClaudeBedrock.sh)  
