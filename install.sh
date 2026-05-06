@@ -48,6 +48,17 @@ source ~/.bash_profile
 # Homebrew + dependencies
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+# pyenv
+## Install pyenv via Homebrew, then set a recent Python as the global default.
+## Homebrew's post-install note tells you to add `eval "$(pyenv init -)"` to
+## your profile — DO NOT do that. Python/lazy.sh handles the lazy init instead.
+brew install pyenv
+## Install and activate a recent stable Python.  Change the version as needed.
+pyenv install --skip-existing 3 || true   # installs latest 3.x if not present
+pyenv global 3                            # set it as the global default
+## Sanity check — should print something like "Python 3.x.y"
+python3 --version
+
 # nvm
 ## The NVM install script APPENDS an eager `. nvm.sh` block to ~/.bash_profile.
 ## That block defeats nvm/lazy.sh and adds ~0.25 s to every new shell on Apple
